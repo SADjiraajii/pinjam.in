@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>pinjam.in - Katalog</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f6f7f9; }
+    header { background: #1f4e79; color: #fff; padding: 16px 24px; }
+    header h1 { margin: 0; font-size: 22px; }
+    main { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+    #katalog { display: grid; gap: 16px;
+               grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    .kartu { background: #fff; border-radius: 12px; padding: 16px;
+             box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+    .kartu h3 { margin: 0 0 8px; font-size: 16px; }
+    .kartu p { margin: 4px 0; font-size: 14px; color: #444; }
+    .harga { color: #1f4e79; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <header><h1>pinjam.in</h1></header>
+  <main>
+    <h2>Katalog Barang</h2>
+    <div id="katalog">Memuat data...</div>
+  </main>
+
+  <script>
+    const API = 'http://localhost:3000';
+
+    async function muatKatalog() {
+      const el = document.getElementById('katalog');
+      try {
+        const res = await fetch(API + '/api/products');
+        const data = await res.json();
+        el.innerHTML = data.map(p => `
+          <div class="kartu">
+            <h3>${p.nama_produk}</h3>
+            <p>${p.deskripsi || ''}</p>
+            <p class="harga">Rp${Number(p.harga_per_hari).toLocaleString('id-ID')} / hari</p>
+            <p>Rating ${p.rating} &middot; Stok ${p.stok}</p>
+          </div>`).join('');
+      } catch (e) {
+        el.innerHTML = '<p>Gagal memuat data. Pastikan backend menyala.</p>';
+      }
+    }
+    muatKatalog();
+  </script>
+</body>
+</html>
